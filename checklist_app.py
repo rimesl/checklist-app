@@ -38,7 +38,11 @@ for i, item in enumerate(st.session_state.checklist):
         checked = st.checkbox("", value=item["completed"], key=f"check_{i}")
         st.session_state.checklist[i]["completed"] = checked
     with cols[1]:
-        st.markdown(f"<div style='line-height: 1.6;'>{'~~' + item['text'] + '~~' if item['completed'] else item['text']}</div>", unsafe_allow_html=True)
+        # Use markdown for strikethrough without unsafe_allow_html
+        if item["completed"]:
+            st.markdown(f"~~{item['text']}~~")
+        else:
+            st.markdown(item["text"])
     with cols[2]:
         if cols[2].button("Supprimer", key=f"delete_{i}"):
             st.session_state.checklist.pop(i)
