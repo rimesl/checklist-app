@@ -9,7 +9,6 @@ st.caption("Interface de checklist interactive")
 if "checklist" not in st.session_state:
     st.session_state.checklist = []
 
-# Add deletion queue flag if not present
 if "delete_id" not in st.session_state:
     st.session_state.delete_id = None
 
@@ -68,11 +67,8 @@ for item in st.session_state.checklist:
             st.markdown(item["text"])
     with cols[2]:
         if cols[2].button("Supprimer", key=f"delete_{item['id']}", use_container_width=True):
-            # Instead of deleting now, set flag
             st.session_state.delete_id = item["id"]
 
-# After the loop, check if any deletion is queued
 if st.session_state.delete_id is not None:
     delete_item(st.session_state.delete_id)
     st.session_state.delete_id = None
-       delete_item(item["id"])
