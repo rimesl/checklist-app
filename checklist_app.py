@@ -14,7 +14,7 @@ if "checklist" not in st.session_state:
 # Add single item
 st.subheader("Ajouter une règle")
 new_item = st.text_input("Nouvelle règle")
-if st.button("Ajouter"):
+if st.button("Ajouter", key="add_single"):
     cleaned = new_item.strip()
     if cleaned and cleaned not in [i["text"] for i in st.session_state.checklist]:
         st.session_state.checklist.append({"text": cleaned, "completed": False})
@@ -23,7 +23,7 @@ if st.button("Ajouter"):
 # Add multiple items
 with st.expander("Ajouter plusieurs règles"):
     multiline = st.text_area("Écris une règle par ligne")
-    if st.button("Ajouter toutes les règles"):
+    if st.button("Ajouter toutes les règles", key="add_multiple"):
         lines = multiline.strip().split("\n")
         added = 0
         for line in lines:
