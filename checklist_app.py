@@ -1,4 +1,5 @@
 import streamlit as st
+import uuid
 
 st.set_page_config(page_title="Checklist PLG", layout="centered")
 
@@ -8,9 +9,16 @@ st.caption("Interface de checklist interactive")
 if "checklist" not in st.session_state:
     st.session_state.checklist = []
 
-# Helper function to update completion status
-def toggle_completed(idx):
-    st.session_state.checklist[idx]["completed"] = not st.session_state.checklist[idx]["completed"]
+# Helper function to toggle completed status
+def toggle_completed(item_id):
+    for item in st.session_state.checklist:
+        if item["id"] == item_id:
+            item["completed"] = not item["completed"]
+            break
+
+# Helper function to delete item by id
+def delete_item(item_id):
+    st.session_state.checklist = [item for item in st.session_state.checklist if item["id"] != item_id]
 
 # Add single item
 st.subheader("Ajouter une règle")
@@ -18,7 +26,11 @@ new_item = st.text_input("Nouvelle règle")
 if st.button("Ajouter", key="add_single"):
     cleaned = new_item.strip()
     if cleaned and cleaned not in [i["text"] for i in st.session_state.checklist]:
-        st.session_state.checklist.append({"text": cleaned, "completed": False})
+        st.session_state.checklist.append({
+            "id": str(uuid.uuid4()),
+            "text": cleaned,
+            "completed": False
+        })
 
 # Add multiple items
 with st.expander("Ajouter plusieurs règles"):
@@ -28,20 +40,24 @@ with st.expander("Ajouter plusieurs règles"):
         for line in lines:
             cleaned = line.strip()
             if cleaned and cleaned not in [i["text"] for i in st.session_state.checklist]:
-                st.session_state.checklist.append({"text": cleaned, "completed": False})
+                st.session_state.checklist.append({
+                    "id": str(uuid.uuid4()),
+                    "text": cleaned,
+                    "completed": False
+                })
 
 # Display checklist
 st.subheader("Checklist")
 
-for i, item in enumerate(st.session_state.checklist):
+for item in st.session_state.checklist:
     cols = st.columns([0.07, 0.8, 0.13])
     with cols[0]:
         st.checkbox(
             "",
             value=item["completed"],
-            key=f"check_{i}",
+            key=f"check_{item['id']}",
             on_change=toggle_completed,
-            args=(i,),
+            args=(item["id"],),
         )
     with cols[1]:
         if item["completed"]:
@@ -49,6 +65,6 @@ for i, item in enumerate(st.session_state.checklist):
         else:
             st.markdown(item["text"])
     with cols[2]:
-        if cols[2].button("Supprimer", key=f"delete_{i}"):
-            st.session_state.checklist.pop(i)
+        if cols[2].button("Supprimer", key=f"delete_{item['id']}"):
+            delete_item(item["id"])
             st.experimental_rerun()
