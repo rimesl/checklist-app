@@ -7,19 +7,6 @@ st.set_page_config(page_title="Checklist PLG", layout="centered")
 st.title("Règles de gestion PLG")
 st.caption("Interface de checklist interactive")
 
-# Light/Dark mode toggle
-theme = st.sidebar.radio("Thème", ["Clair", "Sombre"])
-if theme == "Sombre":
-    st.markdown(
-        """<style>
-            html, body, [class*="css"] {
-                background-color: #0e1117;
-                color: #FAFAFA;
-            }
-        </style>""",
-        unsafe_allow_html=True
-    )
-
 # Initialize checklist in memory only
 if "checklist" not in st.session_state:
     st.session_state.checklist = []
@@ -46,14 +33,6 @@ with st.expander("Ajouter plusieurs règles"):
                 added += 1
         if added:
             st.experimental_rerun()
-
-# Progress
-total = len(st.session_state.checklist)
-done = sum(1 for i in st.session_state.checklist if i["completed"])
-if total > 0:
-    st.subheader("Progression")
-    st.write(f"{done} sur {total} règles complétées ({int((done/total)*100)}%)")
-    st.progress(done / total)
 
 # Display checklist
 st.subheader("Checklist")
