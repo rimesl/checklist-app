@@ -18,21 +18,16 @@ if st.button("Ajouter", key="add_single"):
     cleaned = new_item.strip()
     if cleaned and cleaned not in [i["text"] for i in st.session_state.checklist]:
         st.session_state.checklist.append({"text": cleaned, "completed": False})
-        st.experimental_rerun()
 
 # Add multiple items
 with st.expander("Ajouter plusieurs règles"):
     multiline = st.text_area("Écris une règle par ligne")
     if st.button("Ajouter toutes les règles", key="add_multiple"):
         lines = multiline.strip().split("\n")
-        added = 0
         for line in lines:
             cleaned = line.strip()
             if cleaned and cleaned not in [i["text"] for i in st.session_state.checklist]:
                 st.session_state.checklist.append({"text": cleaned, "completed": False})
-                added += 1
-        if added:
-            st.experimental_rerun()
 
 # Display checklist
 st.subheader("Checklist")
@@ -47,4 +42,3 @@ for i, item in enumerate(st.session_state.checklist):
     with cols[2]:
         if cols[2].button("Supprimer", key=f"delete_{i}"):
             st.session_state.checklist.pop(i)
-            st.experimental_rerun()
