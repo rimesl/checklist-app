@@ -47,6 +47,9 @@ with st.expander("Ajouter plusieurs règles"):
                     "completed": False
                 })
 
+# Inform user about deletion quirk
+st.info("⚠️ Pour supprimer une règle, merci de cliquer deux fois sur le bouton 'Supprimer'.")
+
 # Display checklist
 st.subheader("Checklist")
 
