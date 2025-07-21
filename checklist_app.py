@@ -6,20 +6,12 @@ st.set_page_config(page_title="Checklist PLG", layout="centered")
 st.title("Règles de gestion PLG")
 st.caption("Interface de checklist interactive")
 
-# Initialize session state
 if "checklist" not in st.session_state:
     st.session_state.checklist = []
 
 if "delete_id" not in st.session_state:
     st.session_state.delete_id = None
 
-if "edit_id" not in st.session_state:
-    st.session_state.edit_id = None
-
-if "edit_text" not in st.session_state:
-    st.session_state.edit_text = ""
-
-# Functions
 def toggle_completed(item_id):
     for item in st.session_state.checklist:
         if item["id"] == item_id:
@@ -28,12 +20,6 @@ def toggle_completed(item_id):
 
 def delete_item(item_id):
     st.session_state.checklist = [item for item in st.session_state.checklist if item["id"] != item_id]
-
-def update_item(item_id, new_text):
-    for item in st.session_state.checklist:
-        if item["id"] == item_id:
-            item["text"] = new_text
-            break
 
 # Add single item
 st.subheader("Ajouter une règle")
@@ -61,14 +47,14 @@ with st.expander("Ajouter plusieurs règles"):
                     "completed": False
                 })
 
-# Info for delete behavior
+# Inform user about deletion quirk
 st.info("⚠️ Pour supprimer une règle, merci de cliquer deux fois sur le bouton 'Supprimer'.")
 
 # Display checklist
 st.subheader("Checklist")
 
 for item in st.session_state.checklist:
-    cols = st.columns([0.07, 0.53, 0.13, 0.13, 0.14])
+    cols = st.columns([0.07, 0.75, 0.18])
     with cols[0]:
         st.checkbox(
             "",
@@ -78,30 +64,14 @@ for item in st.session_state.checklist:
             args=(item["id"],),
         )
     with cols[1]:
-        if st.session_state.edit_id == item["id"]:
-            st.session_state.edit_text = st.text_input("Modifier la règle", value=item["text"], key=f"edit_input_{item['id']}")
+        if item["completed"]:
+            st.markdown(f"~~{item['text']}~~")
         else:
-            display_text = f"~~{item['text']}~~" if item["completed"] else item["text"]
-            st.markdown(display_text)
-
+            st.markdown(item["text"])
     with cols[2]:
-        if st.session_state.edit_id == item["id"]:
-            if cols[2].button("✅ Mettre à jour", key=f"update_{item['id']}"):
-                updated = st.session_state.edit_text.strip()
-                if updated:
-                    update_item(item["id"], updated)
-                st.session_state.edit_id = None
-                st.session_state.edit_text = ""
-        else:
-            if cols[2].button("✏️ Modifier", key=f"edit_{item['id']}"):
-                st.session_state.edit_id = item["id"]
-                st.session_state.edit_text = item["text"]
-
-    with cols[3]:
-        if cols[3].button("Supprimer", key=f"delete_{item['id']}", use_container_width=True):
+        if cols[2].button("Supprimer", key=f"delete_{item['id']}", use_container_width=True):
             st.session_state.delete_id = item["id"]
 
-# Handle deletion
 if st.session_state.delete_id is not None:
     delete_item(st.session_state.delete_id)
     st.session_state.delete_id = None
