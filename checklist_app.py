@@ -6,6 +6,7 @@ st.set_page_config(page_title="Checklist PLG", layout="centered")
 st.title("Règles de gestion PLG")
 st.caption("Interface de checklist interactive")
 
+# Initialize checklist in memory only
 if "checklist" not in st.session_state:
     st.session_state.checklist = []
 
@@ -67,4 +68,3 @@ for item in st.session_state.checklist:
     with cols[2]:
         if cols[2].button("Supprimer", key=f"delete_{item['id']}"):
             delete_item(item["id"])
-            st.experimental_rerun()
