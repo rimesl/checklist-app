@@ -1,30 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Jul 16 14:22:43 2025
-
-@author: rimeslaoui
-"""
 import streamlit as st
-import json
-import os
-
-CHECKLIST_FILE = "checklist.json"
-
-# Load checklist from file
-def load_checklist():
-    if os.path.exists(CHECKLIST_FILE):
-        with open(CHECKLIST_FILE, "r", encoding="utf-8") as f:
-            try:
-                return json.load(f)
-            except json.JSONDecodeError:
-                return []
-    return []
-
-# Save checklist to file
-def save_checklist(data):
-    with open(CHECKLIST_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
 
 # --- UI begins here ---
 
@@ -46,9 +20,9 @@ if theme == "Sombre":
         unsafe_allow_html=True
     )
 
-# Load or init checklist
+# Initialize checklist in memory only
 if "checklist" not in st.session_state:
-    st.session_state.checklist = load_checklist()
+    st.session_state.checklist = []
 
 # Add single item
 st.subheader("Ajouter une règle")
@@ -57,7 +31,6 @@ if st.button("Ajouter"):
     cleaned = new_item.strip()
     if cleaned and cleaned not in [i["text"] for i in st.session_state.checklist]:
         st.session_state.checklist.append({"text": cleaned, "completed": False})
-        save_checklist(st.session_state.checklist)
         st.experimental_rerun()
 
 # Add multiple items
@@ -72,7 +45,6 @@ with st.expander("Ajouter plusieurs règles"):
                 st.session_state.checklist.append({"text": cleaned, "completed": False})
                 added += 1
         if added:
-            save_checklist(st.session_state.checklist)
             st.experimental_rerun()
 
 # Progress
@@ -96,8 +68,4 @@ for i, item in enumerate(st.session_state.checklist):
     with cols[2]:
         if cols[2].button("Supprimer", key=f"delete_{i}"):
             st.session_state.checklist.pop(i)
-            save_checklist(st.session_state.checklist)
             st.experimental_rerun()
-
-# Save on checkbox change
-save_checklist(st.session_state.checklist)
